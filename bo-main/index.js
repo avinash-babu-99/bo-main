@@ -1,24 +1,24 @@
 const express = require('express')
-const { json } = require('express/lib/response')
-const fs = require('fs')
+const morgan = require('morgan')
+const getRouter = require('./routes/getRoutes')
 
 
 
 const app = express()
 
-const tours = JSON.parse(fs.readFileSync(`${__dirname}/data/data.json`))
-
-
-app.get('/',(req,res)=>{
-res.status(201).json({
-  status: 'Success',
-  datacount:tours.length,
-  data:tours
-})
+app.use(express.json())
+if (process.env.NODE_ENV === 'development') {
+  app.use(morgan('dev'))
+}
+app.use((req, res, next) => {
+  req.requestTime = new Date().toISOString()
+  next()
 })
 
 
-const port = 400
-app.listen(port,()=>{
-console.log(`listening to port ${port}`)
-})
+
+app.use('/data', getRouter)
+
+
+module.exports = app
+
