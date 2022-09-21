@@ -18,18 +18,32 @@ exports.getAll = async (req, res) => {
 
     let query = DBModel.find(JSON.parse(queryString));
 
-    // console.log(query, "query");
-
+    // sorting
     if (req.query.sort) {
       const sortBy = req.query.sort.split(",").join(" ");
       query = query.sort(sortBy);
     }
 
+    // limiting
     if (req.query.fields) {
       const fields = req.query.fields.split(",").join(" ");
       query = query.select(fields);
     } else {
       query = query.select("-__v");
+    }
+
+    //paginating
+    const page = req.query.page * 1 || 1
+    const limit = req.query.limit * 1 || 100
+    const skip = (page - 1) * limit
+
+    query = query.skip(skip).limit(limit)
+
+    if (req.query.page){
+      const datalength = await DBModel.countDocuments()
+      if(skip >= datalength){
+        throw new Error('page doesnot exists')
+      }
     }
 
     const data = await query;
@@ -96,6 +110,14 @@ exports.updateData = async (req, res) => {
     });
   }
 };
+
+// middlewares
+
+exports.getTopYoung = async(req, res, next) => {
+  req.query.limit = '2',
+  req.query.sort = 'age'
+  next()
+}
 
 // exports.checkRequest = (req, res, next) => {
 //   if (!req.body.name) {
