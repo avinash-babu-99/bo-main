@@ -5,7 +5,34 @@ const DBModel = require("../models/getModel");
 
 exports.getAll = async (req, res) => {
   try {
-    const data = await DBModel.find();
+    const queryObject = { ...req.query };
+    const excludeFields = ["page", "sort", "limit", "fields"];
+    excludeFields.forEach((value) => {
+      delete queryObject[value];
+    });
+
+    let queryString = JSON.stringify(queryObject);
+    queryString = queryString.replace(/\b(gte|gt|lt|lte)\b/g, (matchValue) => {
+      return `$${matchValue}`;
+    });
+
+    let query = DBModel.find(JSON.parse(queryString));
+
+    // console.log(query, "query");
+
+    if (req.query.sort) {
+      const sortBy = req.query.sort.split(",").join(" ");
+      query = query.sort(sortBy);
+    }
+
+    if (req.query.fields) {
+      const fields = req.query.fields.split(",").join(" ");
+      query = query.select(fields);
+    } else {
+      query = query.select("-__v");
+    }
+
+    const data = await query;
 
     res.status(201).json({
       status: "Success",
@@ -13,9 +40,10 @@ exports.getAll = async (req, res) => {
       datacount: data.length,
       data: data,
     });
-  } catch {
+  } catch (err) {
     res.status(400).json({
-      error: "error !!",
+      error: err,
+      status: "error!!",
     });
   }
 };

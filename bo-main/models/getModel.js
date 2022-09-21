@@ -5,6 +5,12 @@ const DBSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  age: {
+    type: Number,
+  },
+  value: {
+    type: Number,
+  },
 });
 
 const DBModel = mongoose.model("prac2", DBSchema);
