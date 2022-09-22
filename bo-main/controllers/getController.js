@@ -199,6 +199,11 @@ exports.getMonthly = async (req, res) => {
           // alias: "$alias",
         },
       },
+      {
+        $addFields: {
+          alias: '$_id'
+        }
+      }
     ]);
 
     res.status(201).json({
