@@ -11,6 +11,7 @@ const DBSchema = new mongoose.Schema({
   value: {
     type: Number,
   },
+  alias: [String],
 });
 
 const DBModel = mongoose.model("prac2", DBSchema);
