@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const slugify = require("slugify");
+const validator = require("validator")
 
 const DBSchema = new mongoose.Schema(
   {
@@ -15,12 +16,22 @@ const DBSchema = new mongoose.Schema(
       //   values: ['enum 1', 'enum 2', 'enum 3'],
       //   message: 'error can be sent here'
       // }
+
+      // we can other methods in Validator based on the requirments
+      // validate: [validator.isAlphanumeric, 'Should have only numbers and characters']
     },
     age: {
       type: Number,
       default: 1,
       min: [1, "min age should be 1"],
       max: [100, "max age should be 100"],
+      // we can add custom validations if required
+      // validate:{
+      //   validator: function(val){
+      //     return val<50
+      //   },
+      //   message: 'error message if needed'
+      // }
     },
     value: {
       type: Number,

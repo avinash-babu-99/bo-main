@@ -94,9 +94,10 @@ exports.postData = async (req, res) => {
       status: "success",
       message: "posted!!!",
     });
-  } catch {
+  } catch(err) {
     res.status(400).json({
       status: "failed",
+      error: err
     });
   }
 };
