@@ -3,6 +3,7 @@ const morgan = require("morgan");
 const AppError = require("./utils/appError");
 const errorHandler = require("./controllers/errorController");
 const getRouter = require("./routes/getRoutes");
+const userRouter = require("./routes/userRoutes");
 
 const app = express();
 
@@ -16,6 +17,7 @@ app.use((req, res, next) => {
 });
 
 app.use("/data", getRouter);
+app.use("/users", userRouter);
 app.all("*", (req, res, next) => {
   next(
     new AppError(
