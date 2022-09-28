@@ -25,7 +25,8 @@ exports.getAll = catchAsync(async (req, res, next) => {
 });
 
 exports.getById = catchAsync(async (req, res, next) => {
-  const data = await DBModel.findById(req.params.id);
+
+  let data = await DBModel.findById(req.params.id);
 
   if (!data) {
     return next(new AppError("No data found in this ID", 404));
@@ -69,9 +70,11 @@ exports.deleteData = catchAsync(async (req, res, next) => {
   if (!data) {
     return next(new AppError("No data found in this ID", 404));
   }
-  res.status(204).json({
-    status: "success",
-  });
+
+  res.status(200).send({
+    message: 'successfully deleted'
+  })
+
 });
 
 // middleware
