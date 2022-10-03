@@ -16,6 +16,9 @@ router
     authenticationController.protect,
     authenticationController.updatePassword
   );
+router.route('/updateMe').patch(
+  authenticationController.protect, userController.updateMe
+)
 router.route("/testNodeMailer").post(authenticationController.testNodeMailer);
 
 router.route("/").get(userController.getUsers).post();
