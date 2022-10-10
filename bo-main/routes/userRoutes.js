@@ -19,6 +19,10 @@ router
 router.route('/updateMe').patch(
   authenticationController.protect, userController.updateMe
 )
+router.route('/deleteMe').patch(
+  authenticationController.protect, userController.deleteMe
+)
+
 router.route("/testNodeMailer").post(authenticationController.testNodeMailer);
 
 router.route("/").get(userController.getUsers).post();

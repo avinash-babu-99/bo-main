@@ -4,7 +4,7 @@ const AppError = require("../utils/appError");
 
 const filterObject = (obj, ...otherFields) => {
   let finalObject = {}
-  obj.keys(obj).forEach(el => {
+  Object.keys(obj).forEach(el => {
     if (otherFields.includes(el)) {
       finalObject[el] = obj[el]
     }
@@ -40,5 +40,14 @@ exports.updateMe = catchAsync(async (req, res, next) => {
   res.status(200).json({
     status: 'success',
     data: Updateduser
+  })
+})
+
+exports.deleteMe = catchAsync(async(req, res, next)=>{
+  await userModel.findByIdAndUpdate(req.user.id, {active: false})
+
+  res.status(204).json({
+    status: 'success!',
+    Response: null
   })
 })
