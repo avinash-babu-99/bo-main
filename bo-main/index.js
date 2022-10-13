@@ -1,5 +1,7 @@
 const express = require("express");
 const morgan = require("morgan");
+const rateLimit = require("express-rate-limit")
+const helmet = require("helmet")
 const AppError = require("./utils/appError");
 const errorHandler = require("./controllers/errorController");
 const getRouter = require("./routes/getRoutes");
@@ -7,10 +9,27 @@ const userRouter = require("./routes/userRoutes");
 
 const app = express();
 
-app.use(express.json());
+// set security http headers
+app.use(helmet())
+
+//Body parser, reading data from body into req.body
+app.use(express.json({limit: '10kb'}));
+
+// dev logging
 if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));
 }
+
+const limiter = rateLimit({
+  max: 100,
+  windowMs: 60 * 60 * 1000,
+  message: 'Too many requests from this IP, please try again in an hour!'
+})
+
+// limiting request from same IP
+app.use('/data',limiter)
+
+
 app.use((req, res, next) => {
   req.requestTime = new Date().toISOString();
   next();
