@@ -1,7 +1,8 @@
 const mongoose = require("mongoose");
 
 const fs = require("fs");
-const DBModel = require("../models/getModel");
+// const DBModel = require("../models/getModel");
+const DBModel = require("../models/contactModel");
 const dotenv = require("dotenv");
 dotenv.config({ path: "./config.env" });
 
@@ -23,7 +24,49 @@ mongoose
     console.log("error connecting Data base");
   });
 
-const data = JSON.parse(fs.readFileSync(`${__dirname}/my-data.json`, "utf-8"));
+// const data = JSON.parse(fs.readFileSync(`${__dirname}/my-data.json`, "utf-8"));
+
+const data = [
+  {
+    name: "person 1",
+    contacts: [
+      {
+        name: "person 2",
+        roomId: 1,
+      },
+      {
+        name: "person 3",
+        roomId: 2,
+      },
+    ],
+  },
+  {
+    name: "person 2",
+    contacts: [
+      {
+        name: "person 1",
+        roomId: 1,
+      },
+      {
+        name: "person 3",
+        roomId: 4,
+      },
+    ],
+  },
+  {
+    name: "person 3",
+    contacts: [
+      {
+        name: "person 1",
+        roomId: 2,
+      },
+      {
+        name: "person 2",
+        roomId: 4,
+      },
+    ],
+  },
+];
 
 const importData = async () => {
   try {
