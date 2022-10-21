@@ -29,40 +29,43 @@ mongoose
 const data = [
   {
     name: "person 1",
+    phone: "12345",
     contacts: [
       {
         name: "person 2",
-        roomId: 1,
+        roomId: "12345_12346",
       },
       {
         name: "person 3",
-        roomId: 2,
+        roomId: "12345_12347",
       },
     ],
   },
   {
     name: "person 2",
+    phone: "12346",
     contacts: [
       {
         name: "person 1",
-        roomId: 1,
+        roomId: "12345_12346",
       },
       {
         name: "person 3",
-        roomId: 4,
+        roomId: "12346_12347",
       },
     ],
   },
   {
     name: "person 3",
+    phone: "12347",
     contacts: [
       {
         name: "person 1",
-        roomId: 2,
+        roomId: "12345_12347",
       },
       {
         name: "person 2",
-        roomId: 4,
+        roomId: "12346_12347",
       },
     ],
   },
@@ -81,7 +84,7 @@ const importData = async () => {
 const deleteData = async () => {
   try {
     await DBModel.deleteMany();
-    console.log("delete successfull!!");
+    console.log("delete successful!!");
     process.exit();
   } catch (err) {
     console.log("error deleting");

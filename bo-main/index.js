@@ -7,6 +7,7 @@ const errorHandler = require("./controllers/errorController");
 const getRouter = require("./routes/getRoutes");
 const userRouter = require("./routes/userRoutes");
 const contactsRouter = require("./routes/contactRoutes");
+const messagesRouter = require("./routes/messagesRoutes");
 
 const app = express();
 
@@ -30,7 +31,7 @@ io.on("connection", (socket) => {
   socket.on("message", (data) => {
     console.log("message coming", data);
     io.in(data.room).emit("new message", {
-      user: data.data,
+      user: data.sendUser,
       message: data.message,
     });
   });
@@ -64,6 +65,7 @@ app.use((req, res, next) => {
 app.use("/data", getRouter);
 app.use("/users", userRouter);
 app.use("/contacts", contactsRouter);
+app.use("/messages", messagesRouter);
 app.all("*", (req, res, next) => {
   next(
     new AppError(
