@@ -13,13 +13,13 @@ const sendMailTest = async options => {
   })
 
   const mailOptions = {
-    from: 'ta8600419@gmail.com',
+    from: 'ta8600419`@gmail.com',
     // to: 'avinashbabu2312@gmail.com, arunkumarakit123@gmail.com',
     to: 'avinashbabu2312@gmail.com',
     // cc: 'arunkumarakit123@gmail.com',
     // to: 'arunkumarakit123@gmail.com',
     subject: 'testing nodemailer',
-    text: 'Hi from the nodeMailer \n checking cc \n you are officially hacked.....',
+    text: 'Hi from the nodeMailer',
     // html:
   }
 
