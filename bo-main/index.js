@@ -31,7 +31,7 @@ io.on("connection", (socket) => {
   socket.on("message", (data) => {
     console.log("message coming", data);
     io.in(data.room).emit("new message", {
-      user: data.sendUser,
+      sender: data.sendUser,
       message: data.message,
     });
   });

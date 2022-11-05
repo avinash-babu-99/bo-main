@@ -2,7 +2,9 @@ const mongoose = require("mongoose");
 
 const fs = require("fs");
 // const DBModel = require("../models/getModel");
-const DBModel = require("../models/contactModel");
+// const DBModel = require("../models/contactModel");
+const DBModel = require("../models/messagesModel");
+
 const dotenv = require("dotenv");
 dotenv.config({ path: "./config.env" });
 

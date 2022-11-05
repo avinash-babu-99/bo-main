@@ -5,6 +5,10 @@ const schema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  sender: {
+    type: String,
+    required: true,
+  },
   message: {
     type: String,
     required: true,
