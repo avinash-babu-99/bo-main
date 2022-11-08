@@ -1,33 +1,33 @@
-const model = require('../models/roomModel')
+const model = require("../models/roomModel");
 const catchAsync = require("../utils/catchAsync");
 const AppError = require("../utils/appError");
 
+exports.getRoom = catchAsync(async (req, res, next) => {
+  console.log("requested");
+  console.log(req.query.ids, "body check");
 
+  const value = [...req.query.ids];
 
-exports.getRoom = catchAsync(async(req, res, next)=>{
+  console.log(value);
 
-  const value = ["6352db7845b7442168d39d7e","6352db7845b7442168d39d7f" ]
-  // const value = ["check"]
+  const data = await model.find({ users: { $all: value } });
 
-  const data = await model.find({users: {$all: value}})
+  console.log(data, "response");
 
   return res.status(200).json({
-    message:"success!",
-    data: data
-  })
+    message: "success!",
+    data: data,
+  });
+});
 
-})
-
-
-exports.newRoom = catchAsync(async(req, res, next)=>{
+exports.newRoom = catchAsync(async (req, res, next) => {
   const payload = {
-    users: [...req.body.users]
-  }
+    users: [...req.body.users],
+  };
 
-  const postedData = await model.create(payload)
+  const postedData = await model.create(payload);
   return res.status(200).json({
-    message:"success!",
-    data: postedData
-  })
-})
-
+    message: "success!",
+    data: postedData,
+  });
+});

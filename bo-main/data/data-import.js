@@ -2,8 +2,8 @@ const mongoose = require("mongoose");
 
 const fs = require("fs");
 // const DBModel = require("../models/getModel");
-// const DBModel = require("../models/contactModel");
-const DBModel = require("../models/messagesModel");
+const DBModel = require("../models/contactModel");
+// const DBModel = require("../models/messagesModel");
 
 const dotenv = require("dotenv");
 dotenv.config({ path: "./config.env" });
@@ -34,10 +34,12 @@ const data = [
     phone: "12345",
     contacts: [
       {
+        id: "6352db7845b7442168d39d7f",
         name: "person 2",
         roomId: "12345_12346",
       },
       {
+        id: "6352db7845b7442168d39d80",
         name: "person 3",
         roomId: "12345_12347",
       },
@@ -48,10 +50,12 @@ const data = [
     phone: "12346",
     contacts: [
       {
+        id: "6352db7845b7442168d39d7e",
         name: "person 1",
         roomId: "12345_12346",
       },
       {
+        id: "6352db7845b7442168d39d80",
         name: "person 3",
         roomId: "12346_12347",
       },
@@ -62,10 +66,12 @@ const data = [
     phone: "12347",
     contacts: [
       {
+        id: "6352db7845b7442168d39d7e",
         name: "person 1",
         roomId: "12345_12347",
       },
       {
+        id: "6352db7845b7442168d39d7f",
         name: "person 2",
         roomId: "12346_12347",
       },
