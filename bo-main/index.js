@@ -29,6 +29,11 @@ io.on("connection", (socket) => {
     socket.broadcast.to(data.room).emit("user joined");
   });
 
+  socket.on("bot message", ((args, cb)=>{
+    console.log(args);
+    cb('shut the fuck up and talk to real people')
+  }))
+
   socket.on("message", (data) => {
     console.log("message coming", data);
     io.in(data.room).emit("new message", {
