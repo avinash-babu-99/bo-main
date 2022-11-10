@@ -8,7 +8,7 @@ const getRouter = require("./routes/getRoutes");
 const userRouter = require("./routes/userRoutes");
 const contactsRouter = require("./routes/contactRoutes");
 const messagesRouter = require("./routes/messagesRoutes");
-const roomsRouter = require("./routes/roomRoutes")
+const roomsRouter = require("./routes/roomRoutes");
 
 const app = express();
 
@@ -29,10 +29,10 @@ io.on("connection", (socket) => {
     socket.broadcast.to(data.room).emit("user joined");
   });
 
-  socket.on("bot message", ((args, cb)=>{
+  socket.on("bot message", (args, cb) => {
     console.log(args);
-    cb('shut the fuck up and talk to real people')
-  }))
+    cb("Shut the fuck up and talk to real people");
+  });
 
   socket.on("message", (data) => {
     console.log("message coming", data);
@@ -72,7 +72,7 @@ app.use("/data", getRouter);
 app.use("/users", userRouter);
 app.use("/contacts", contactsRouter);
 app.use("/messages", messagesRouter);
-app.use("/rooms", roomsRouter)
+app.use("/rooms", roomsRouter);
 app.all("*", (req, res, next) => {
   next(
     new AppError(
