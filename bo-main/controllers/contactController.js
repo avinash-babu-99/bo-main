@@ -3,7 +3,7 @@ const catchAsync = require("../utils/catchAsync");
 const AppError = require("../utils/appError");
 
 exports.getContacts = catchAsync(async (req, res, next) => {
-  const users = await contactModel.find();
+  const users = await contactModel.find().populate("contacts");
 
   res.status(201).json({
     status: "Success",
@@ -15,7 +15,11 @@ exports.getContacts = catchAsync(async (req, res, next) => {
 
 exports.getContactByPhone = catchAsync(async (req, res, next) => {
   console.log(req.body);
-  const user = await contactModel.find({ phone: req.body.phone });
+  const user = await contactModel
+    .find({ phone: req.body.phone })
+    .populate("contacts");
+
+  // await user.populate("users").execPopulate();
   console.log(user, "user");
 
   if (!user.length) {
@@ -25,5 +29,17 @@ exports.getContactByPhone = catchAsync(async (req, res, next) => {
   res.status(201).json({
     message: "success!!",
     user: user,
+  });
+});
+
+exports.getAddFriends = catchAsync(async (req, res, next) => {
+  let searchArray = req.body.searchArray;
+  const users = await contactModel
+    .find({ _id: { $nin: searchArray } })
+    .populate("contacts");
+
+  res.status(201).json({
+    status: "success",
+    users,
   });
 });
