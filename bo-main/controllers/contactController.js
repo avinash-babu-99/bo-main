@@ -17,7 +17,9 @@ exports.getContactByPhone = catchAsync(async (req, res, next) => {
   console.log(req.body);
   const user = await contactModel
     .find({ phone: req.body.phone })
-    .populate("contacts");
+    .populate("contacts")
+    .populate("sentFriendRequests")
+    .populate("receivedFriendRequests");
 
   // await user.populate("users").execPopulate();
   console.log(user, "user");
