@@ -41,6 +41,14 @@ io.on("connection", (socket) => {
       message: data.message,
     });
   });
+
+  socket.on("notify",(data)=>{
+    console.log('notification received');
+    io.local.emit("new notfication", {
+      data
+    })
+  })
+
 });
 
 // set security http headers
