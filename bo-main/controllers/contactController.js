@@ -2,6 +2,17 @@ const contactModel = require("../models/contactModel");
 const catchAsync = require("../utils/catchAsync");
 const AppError = require("../utils/appError");
 
+const filterObject = (obj, ...otherFields) => {
+  let finalObject = {};
+  Object.keys(obj).forEach((el) => {
+    if (otherFields.includes(el)) {
+      finalObject[el] = obj[el];
+    }
+  });
+
+  return finalObject;
+};
+
 exports.getContacts = catchAsync(async (req, res, next) => {
   const users = await contactModel.find().populate("contacts");
 
@@ -43,5 +54,30 @@ exports.getAddFriends = catchAsync(async (req, res, next) => {
   res.status(201).json({
     status: "success",
     users,
+  });
+});
+
+exports.addFriendRequest = catchAsync(async (req, res, next) => {
+  const fromPayload = req.body.from;
+  console.log(req.body, "body");
+  const fromObject = filterObject(fromPayload, "_id");
+  const fromResponse = await contactModel.findByIdAndUpdate(fromPayload._id, {
+    sentFriendRequests: [...fromPayload.sentFriendRequests],
+  });
+
+  console.log(fromResponse, "fromResponse");
+
+  const toPayload = req.body.to;
+  const toObject = filterObject(toPayload, "_id");
+  console.log(toPayload._id);
+  const toResponse = await contactModel.findByIdAndUpdate(toPayload._id, {
+    receivedFriendRequests: [...toPayload.receivedFriendRequests],
+  });
+
+  console.log(toResponse, "toResponse");
+
+  res.status(201).json({
+    status: "Success",
+    message: "Request Sent!!",
   });
 });
