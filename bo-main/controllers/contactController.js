@@ -59,16 +59,11 @@ exports.getAddFriends = catchAsync(async (req, res, next) => {
 
 exports.addFriendRequest = catchAsync(async (req, res, next) => {
   const fromPayload = req.body.from;
-  console.log(req.body, "body");
-  const fromObject = filterObject(fromPayload, "_id");
   const fromResponse = await contactModel.findByIdAndUpdate(fromPayload._id, {
     sentFriendRequests: [...fromPayload.sentFriendRequests],
   });
 
-  console.log(fromResponse, "fromResponse");
-
   const toPayload = req.body.to;
-  const toObject = filterObject(toPayload, "_id");
   console.log(toPayload._id);
   const toResponse = await contactModel.findByIdAndUpdate(toPayload._id, {
     receivedFriendRequests: [...toPayload.receivedFriendRequests],
@@ -81,3 +76,26 @@ exports.addFriendRequest = catchAsync(async (req, res, next) => {
     message: "Request Sent!!",
   });
 });
+
+exports.acceptOrRejectFriendRequest = catchAsync(async (req, res, next) => {
+  const fromPayload = req.body.from;
+  const fromResponse = await contactModel.findByIdAndUpdate(fromPayload._id, {
+    $pull: { 'sentFriendRequests': fromPayload.fromId },
+  });
+
+  const toPayload = req.body.to
+  const toResponse = await contactModel.findByIdAndUpdate(toPayload._id, {
+    $pull: { 'receivedFriendRequests': fromPayload.fromId },
+  });
+
+  if (req.body.action === 'accept') {
+
+    const fromResponse = await contactModel.findByIdAndUpdate(fromPayload._id, {
+      $push: { 'contacts': toPayload._id }
+    })
+
+    const toResponse = await contactModel.findByIdAndUpdate(toPayload._id, {
+      $push: { 'contacts': fromPayload._id }
+    })
+  }
+})
