@@ -80,22 +80,28 @@ exports.addFriendRequest = catchAsync(async (req, res, next) => {
 exports.acceptOrRejectFriendRequest = catchAsync(async (req, res, next) => {
   const fromPayload = req.body.from;
   const fromResponse = await contactModel.findByIdAndUpdate(fromPayload._id, {
-    $pull: { 'sentFriendRequests': fromPayload.fromId },
+    $pull: { sentFriendRequests: fromPayload.toId },
   });
 
-  const toPayload = req.body.to
+  const toPayload = req.body.to;
   const toResponse = await contactModel.findByIdAndUpdate(toPayload._id, {
-    $pull: { 'receivedFriendRequests': fromPayload.fromId },
+    $pull: { receivedFriendRequests: fromPayload.fromId },
   });
 
-  if (req.body.action === 'accept') {
-
+  if (req.body.action === "accept") {
     const fromResponse = await contactModel.findByIdAndUpdate(fromPayload._id, {
-      $push: { 'contacts': toPayload._id }
-    })
+      $push: { contacts: toPayload._id },
+    });
 
     const toResponse = await contactModel.findByIdAndUpdate(toPayload._id, {
-      $push: { 'contacts': fromPayload._id }
-    })
+      $push: { contacts: fromPayload._id },
+    });
   }
-})
+
+  console.log(req.body, "req.body");
+
+  res.status(201).json({
+    status: "success!",
+    message: "status updated",
+  });
+});
