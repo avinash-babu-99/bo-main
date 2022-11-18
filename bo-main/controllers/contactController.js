@@ -78,14 +78,16 @@ exports.addFriendRequest = catchAsync(async (req, res, next) => {
 });
 
 exports.acceptOrRejectFriendRequest = catchAsync(async (req, res, next) => {
+  console.log(req.body, "body");
   const fromPayload = req.body.from;
+  const toPayload = req.body.to;
+
   const fromResponse = await contactModel.findByIdAndUpdate(fromPayload._id, {
-    $pull: { sentFriendRequests: fromPayload.toId },
+    $pull: { receivedFriendRequests: toPayload._id },
   });
 
-  const toPayload = req.body.to;
   const toResponse = await contactModel.findByIdAndUpdate(toPayload._id, {
-    $pull: { receivedFriendRequests: fromPayload.fromId },
+    $pull: { sentFriendRequests: fromPayload._id },
   });
 
   if (req.body.action === "accept") {
@@ -99,6 +101,21 @@ exports.acceptOrRejectFriendRequest = catchAsync(async (req, res, next) => {
   }
 
   console.log(req.body, "req.body");
+
+  res.status(201).json({
+    status: "success!",
+    message: "status updated",
+  });
+});
+
+exports.removeFriend = catchAsync(async (req, res, next) => {
+  const removeResponse = await contactModel.findByIdAndUpdate(req.body._id, {
+    $pull: { contacts: req.body.contactId },
+  });
+
+  const Response = await contactModel.findByIdAndUpdate(req.body.contactId, {
+    $pull: { contacts: req.body._id },
+  });
 
   res.status(201).json({
     status: "success!",

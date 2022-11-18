@@ -11,5 +11,6 @@ router.route("/addFriendRequest").patch(contactController.addFriendRequest);
 router
   .route("/acceptOrRejectFriendRequest")
   .patch(contactController.acceptOrRejectFriendRequest);
+router.route("/removeContact").patch(contactController.removeFriend);
 
 module.exports = router;
