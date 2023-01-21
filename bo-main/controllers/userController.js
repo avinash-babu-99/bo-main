@@ -16,6 +16,14 @@ const filterObject = (obj, ...otherFields) => {
 exports.getUsers = catchAsync(async (req, res, next) => {
   const users = await userModel.find();
 
+
+  const cookieOptions = {
+    httpOnly: true,
+    path: '/users'
+  };
+
+  res.cookie("jwt", "dsdadsadsa", cookieOptions);
+
   res.status(201).json({
     status: "Success",
     requestedAt: req.requestTime,

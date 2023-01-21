@@ -9,12 +9,21 @@ const userRouter = require("./routes/userRoutes");
 const contactsRouter = require("./routes/contactRoutes");
 const messagesRouter = require("./routes/messagesRoutes");
 const roomsRouter = require("./routes/roomRoutes");
+const contactUserRouter = require("./routes/contactUserRoutes")
+const cors = require("cors")
 
 const app = express();
 
 const server = require("http").createServer(app);
 
 const io = require("socket.io")(server, { cors: { origin: "*" } });
+
+app.use(cors(
+  {
+    origin : "http://localhost:4200",
+    credentials: true
+  }
+))
 
 server.listen(3001, () => {
   console.log("socket server running");
@@ -80,6 +89,7 @@ app.use("/users", userRouter);
 app.use("/contacts", contactsRouter);
 app.use("/messages", messagesRouter);
 app.use("/rooms", roomsRouter);
+app.use("/contactsAuth", contactUserRouter)
 app.all("*", (req, res, next) => {
   next(
     new AppError(
