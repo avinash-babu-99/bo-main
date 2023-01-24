@@ -60,5 +60,19 @@ schema.pre("save", function (next) {
   next();
 });
 
+schema.methods.correctPassword = async function(candidatePassword, userPassword){
+  return await bcrypt.compare(candidatePassword, userPassword);
+};
+
+schema.methods.changePasswordAfter = function (JWTTimestamp) {
+  if (this.passwordChangedAt) {
+    const changedTImeStamp = parseInt(this.passwordChangedAt / 1000, 10);
+
+    return changedTImeStamp > JWTTimestamp;
+  }
+
+  return false;
+};
+
 const model = Mongoose.model('contactUser', schema)
 module.exports = model

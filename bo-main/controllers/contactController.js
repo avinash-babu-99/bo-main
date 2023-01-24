@@ -125,34 +125,3 @@ exports.removeFriend = catchAsync(async (req, res, next) => {
     message: "status updated",
   });
 });
-
-exports.protect = catchAsync(async (req, res, next) => {
-  let token
-
-  console.log(req.headers.authorization, 'auth');
-
-  if (req.headers.authorization && req.headers.authorization.startsWith("Bearer")) {
-    // console.log(req.headers.authorization.split(" "), 'auth2');
-    token = req.headers.authorization.split(" ")[1];
-  }
-
-  if(!token){
-    return next(
-      new AppError("you are not logged in, please login to access", 401)
-    );
-  }
-
-  // jwt.verify(token, process.env.JWT_SECRET, (err, decoded)=>{
-  //   if(err){
-  //     return next(new AppError('Authentication failed', 401))
-  //   }
-  //   console.log(decoded, 'decoded');
-  // })
-
-  const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
-
-  console.log(decoded, 'decoded');
-
-  next()
-
-})

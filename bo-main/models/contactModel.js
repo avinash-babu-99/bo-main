@@ -12,6 +12,10 @@ const contactSchema = new mongoose.Schema({
     required: [true, "Enter you phone number"],
     unique: true,
   },
+  userDetail: {
+    type: mongoose.Schema.ObjectId,
+    select: false
+  },
   contacts: [
     {
       type: mongoose.Schema.ObjectId,
@@ -29,7 +33,7 @@ const contactSchema = new mongoose.Schema({
       type: mongoose.Schema.ObjectId,
       ref: "contact",
     },
-  ],
+  ]
 });
 
 const DBModel = mongoose.model("contact", contactSchema);

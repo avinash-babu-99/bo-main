@@ -3,6 +3,8 @@ const contactModel = require("../models/contactModel");
 const AppError = require("../utils/appError");
 const jwt = require("jsonwebtoken");
 const catchAsync = require("../utils/catchAsync");
+const { promisify } = require("util");
+
 
 
 const signToken = (id) => {
@@ -31,8 +33,21 @@ exports.signup = catchAsync(async (req, res, next) => {
     ...payload
   })
 
+  const userDetailsPayload = {
+    name: response.name,
+    phone: response.phone,
+    userDetail: response._id,
+    contacts: [],
+    sentFriendRequests: [],
+    receivedFriendRequests: []
+  }
 
-  if (response && response._id) {
+  const userResponse = await contactModel.create({
+    ...userDetailsPayload
+  })
+
+
+  if (response && response._id && userResponse) {
 
     const token = signToken(response._id)
     res.set('Authorization', `Bearer ${token}`);
@@ -50,9 +65,7 @@ exports.signup = catchAsync(async (req, res, next) => {
 exports.protect = catchAsync(async (req, res, next) => {
   let token
 
-  console.log(req.headers.authorization, 'auth');
-
-  if (req.headers.authorization && req.headers.authorization.startsWith("bearer")) {
+  if (req.headers.authorization && req.headers.authorization.startsWith("Bearer")) {
     token = req.headers.authorization.split(" ")[1];
   }
 
@@ -62,17 +75,68 @@ exports.protect = catchAsync(async (req, res, next) => {
     );
   }
 
+  let decodedValue
+
   jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
     if (err) {
       return next(new AppError('Authentication failed', 401))
     }
+
+    decodedValue = decoded
     console.log(decoded, 'decoded');
   })
+
+  const currentUser = await model.findById(decodedValue.id);
+
+  if (!currentUser) {
+    return next(
+      new AppError("the user belonging to the token no longer exists", 401)
+    );
+  }
+
+  if (currentUser.changePasswordAfter(decodedValue.iat)) {
+    return next(
+      new AppError("Password changed recently, please login again", 401)
+    );
+  }
+
+  req.user = currentUser
 
   next()
 
 })
 
-exports.login = catchAsync(async (req, res, next)=>{
+exports.login = catchAsync(async (req, res, next) => {
+
+  const payload = {
+
+  }
+
+
+  const response = await model.findOne({
+    phone: req.body.phone
+  }).select('+password')
+
+  console.log(response, 'login user res');
+  console.log(payload, 'payload');
+
+  console.log(response.phone, 'phone');
+  console.log(response.password, 'password');
+
+  // if(!response){
+  //   return next(new AppError('User does not exists'))
+  // };
+
+  if (!response._id || !(await response.correctPassword(req.body.password, response.password))) {
+    return next(new AppError("email or password is incorrect", 400));
+  }
+
+  const token = signToken(response._id)
+
+  res.set('Authorization', `Bearer ${token}`);
+  res.status(201).json({
+    message: 'Login success'
+  })
+
 
 })
