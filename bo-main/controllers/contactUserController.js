@@ -50,7 +50,8 @@ exports.signup = catchAsync(async (req, res, next) => {
   if (response && response._id && userResponse) {
 
     const token = signToken(response._id)
-    res.set('Authorization', `Bearer ${token}`);
+    // res.set('Authorization', `Bearer ${token}`);
+    // res.cookie('Auth-token', token, {sameSite: 'none'});
     res.status(201).json({
       message: 'Sign up success',
       token
@@ -108,35 +109,32 @@ exports.protect = catchAsync(async (req, res, next) => {
 
 exports.login = catchAsync(async (req, res, next) => {
 
-  const payload = {
-
-  }
-
-
   const response = await model.findOne({
     phone: req.body.phone
   }).select('+password')
 
   console.log(response, 'login user res');
-  console.log(payload, 'payload');
 
   console.log(response.phone, 'phone');
   console.log(response.password, 'password');
-
-  // if(!response){
-  //   return next(new AppError('User does not exists'))
-  // };
 
   if (!response._id || !(await response.correctPassword(req.body.password, response.password))) {
     return next(new AppError("email or password is incorrect", 400));
   }
 
+  const userDetails = await contactModel.findOne({
+    phone: req.body.phone
+  })
+
   const token = signToken(response._id)
+
+  response.password = undefined;
 
   res.set('Authorization', `Bearer ${token}`);
   res.status(201).json({
-    message: 'Login success'
-  })
-
+    message: 'Login success',
+    token: token,
+    user: userDetails
+    })
 
 })

@@ -11,6 +11,7 @@ const messagesRouter = require("./routes/messagesRoutes");
 const roomsRouter = require("./routes/roomRoutes");
 const contactUserRouter = require("./routes/contactUserRoutes")
 const cors = require("cors")
+const cookieParser = require('cookie-parser');
 
 const app = express();
 
@@ -24,6 +25,8 @@ app.use(cors(
     credentials: true
   }
 ))
+
+app.use(cookieParser())
 
 server.listen(3001, () => {
   console.log("socket server running");

@@ -17,7 +17,7 @@ const schema = new Mongoose.Schema({
   password: {
     type: String,
     required: [true, 'please enter the password'],
-    minlength: 8,
+    minlength: 4,
     select: false
   },
   confirmPassword: {
