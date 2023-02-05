@@ -125,3 +125,22 @@ exports.removeFriend = catchAsync(async (req, res, next) => {
     message: "status updated",
   });
 });
+
+exports.getContactById = catchAsync(async (req, res, next) => {
+  const id = req.params.id;
+  let user;
+  if (id) {
+    user = await contactModel
+      .findById(id)
+      .populate("contacts")
+      .populate("sentFriendRequests")
+      .populate("receivedFriendRequests");
+  }
+
+  if (user) {
+    res.status(201).json({
+      status: "success",
+      response: user,
+    });
+  }
+});
