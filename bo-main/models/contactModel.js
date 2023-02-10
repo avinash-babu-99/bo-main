@@ -33,7 +33,12 @@ const contactSchema = new mongoose.Schema({
       type: mongoose.Schema.ObjectId,
       ref: "contact",
     },
-  ]
+  ],
+  status: {
+    type: String,
+    enum: ["online", "offline"],
+    default: "offline",
+  },
 });
 
 const DBModel = mongoose.model("contact", contactSchema);

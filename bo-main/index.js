@@ -13,6 +13,8 @@ const contactUserRouter = require("./routes/contactUserRoutes")
 const cors = require("cors")
 const cookieParser = require('cookie-parser');
 
+const contactModel = require("./models/contactModel")
+
 const app = express();
 
 const server = require("http").createServer(app);
@@ -21,7 +23,7 @@ const io = require("socket.io")(server, { cors: { origin: "*" } });
 
 app.use(cors(
   {
-    origin : "http://localhost:4200",
+    origin: "http://localhost:4200",
     credentials: true
   }
 ))
@@ -32,14 +34,64 @@ server.listen(3001, () => {
   console.log("socket server running");
 });
 
+async function updateContactStatus(id, status) {
+
+  let res = {}
+
+  if(id && status){
+
+    res = await contactModel.findByIdAndUpdate(id, {
+      status
+    }, {
+      new: true
+    })
+  }
+
+  console.log(res, 'res in ansync');
+
+  return res
+}
+
 io.on("connection", (socket) => {
   console.log("coming in");
   console.log("user connected", socket.id);
   socket.on("join", (data) => {
-    console.log(data, "data while join");
     socket.join(data.room);
     socket.broadcast.to(data.room).emit("user joined");
   });
+
+  let loginDetails = {}
+
+  socket.on('loginDetails', async (data) => {
+    console.log(data, 'details')
+    loginDetails = data
+    updateContactStatus(loginDetails._id, 'online')
+    socket.emit("updateContactStatus", loginDetails._id)
+  })
+
+
+  socket.on('disconnect', async () => {
+    console.log(`Client disconnected: ${socket.id}`, loginDetails);
+    updateContactStatus(loginDetails._id, 'offline')
+    socket.emit("updateContactStatus", loginDetails._id)
+  });
+
+  socket.on("goOnline", (data) => {
+    socket.join(data._id)
+    io.in(data.room).emit("onlineStatus", {
+      id: data.id,
+      status: "online"
+    });
+  })
+
+  socket.on("goOffline", (data) => {
+    // console.log(data, "data going offline");
+    socket.join(data._id)
+    io.in(data.room).emit("onlineStatus", {
+      id: data.id,
+      status: "offline"
+    });
+  })
 
   socket.on("bot message", (args, cb) => {
     console.log(args);

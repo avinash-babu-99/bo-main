@@ -84,7 +84,6 @@ exports.protect = catchAsync(async (req, res, next) => {
     }
 
     decodedValue = decoded
-    console.log(decoded, 'decoded');
   })
 
   const currentUser = await model.findById(decodedValue.id);
@@ -113,11 +112,6 @@ exports.login = catchAsync(async (req, res, next) => {
     phone: req.body.phone
   }).select('+password')
 
-  console.log(response, 'login user res');
-
-  console.log(response.phone, 'phone');
-  console.log(response.password, 'password');
-
   if (!response._id || !(await response.correctPassword(req.body.password, response.password))) {
     return next(new AppError("email or password is incorrect", 400));
   }
@@ -125,8 +119,6 @@ exports.login = catchAsync(async (req, res, next) => {
   const userDetails = await contactModel.findOne({
     phone: req.body.phone
   }).populate("contacts").populate("sentFriendRequests").populate("receivedFriendRequests")
-
-  console.log(userDetails, 'userDetails');
 
   const token = signToken(response._id)
 

@@ -17,6 +17,8 @@ const filterObject = (obj, ...otherFields) => {
 };
 
 exports.getContacts = catchAsync(async (req, res, next) => {
+
+  console.log('coming contacts api');
   const users = await contactModel.find().populate("contacts");
 
   res.status(201).json({
@@ -144,3 +146,25 @@ exports.getContactById = catchAsync(async (req, res, next) => {
     });
   }
 });
+
+
+exports.findByIdAndUpdate = catchAsync(async(req, res, next)=>{
+  const id = req.params.id;
+  let user
+  if (id) {
+    user = await contactModel
+      .findByIdAndUpdate(id, req.body, {
+        new: true,
+      })
+      .populate("contacts")
+      .populate("sentFriendRequests")
+      .populate("receivedFriendRequests");
+  }
+
+  if( user ) {
+    res.status(201).json({
+      status:'updated successfully',
+      response: user
+    })
+  }
+})

@@ -14,5 +14,6 @@ router
   .patch(contactController.acceptOrRejectFriendRequest);
 router.route("/removeContact").patch(contactController.removeFriend);
 router.route("/:id").get(contactController.getContactById)
+router.route("/:id").patch(contactController.findByIdAndUpdate)
 
 module.exports = router;
