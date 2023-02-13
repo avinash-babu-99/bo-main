@@ -19,7 +19,7 @@ const filterObject = (obj, ...otherFields) => {
 exports.getContacts = catchAsync(async (req, res, next) => {
 
   console.log('coming contacts api');
-  const users = await contactModel.find().populate("contacts");
+  const users = await contactModel.find().populate("contacts.contact");
 
   res.status(201).json({
     status: "Success",
@@ -33,7 +33,7 @@ exports.getContactByPhone = catchAsync(async (req, res, next) => {
   console.log(req.body);
   const user = await contactModel
     .find({ phone: req.body.phone })
-    .populate("contacts")
+    .populate("contacts.contact")
     .populate("sentFriendRequests")
     .populate("receivedFriendRequests");
 
@@ -54,7 +54,7 @@ exports.getAddFriends = catchAsync(async (req, res, next) => {
   let searchArray = req.body.searchArray;
   const users = await contactModel
     .find({ _id: { $nin: searchArray } })
-    .populate("contacts");
+    .populate("contacts.contact");
 
   res.status(201).json({
     status: "success",
@@ -97,11 +97,15 @@ exports.acceptOrRejectFriendRequest = catchAsync(async (req, res, next) => {
 
   if (req.body.action === "accept") {
     const fromResponse = await contactModel.findByIdAndUpdate(fromPayload._id, {
-      $push: { contacts: toPayload._id },
+      $push: { contacts: {
+        contact: toPayload._id,
+      } },
     });
 
     const toResponse = await contactModel.findByIdAndUpdate(toPayload._id, {
-      $push: { contacts: fromPayload._id },
+      $push: { contacts: {
+        contact: fromPayload._id,
+      } },
     });
   }
 
@@ -134,7 +138,7 @@ exports.getContactById = catchAsync(async (req, res, next) => {
   if (id) {
     user = await contactModel
       .findById(id)
-      .populate("contacts")
+      .populate("contacts.contact")
       .populate("sentFriendRequests")
       .populate("receivedFriendRequests");
   }
@@ -156,7 +160,7 @@ exports.findByIdAndUpdate = catchAsync(async(req, res, next)=>{
       .findByIdAndUpdate(id, req.body, {
         new: true,
       })
-      .populate("contacts")
+      .populate("contacts.contact")
       .populate("sentFriendRequests")
       .populate("receivedFriendRequests");
   }

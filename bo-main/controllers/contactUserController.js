@@ -118,7 +118,7 @@ exports.login = catchAsync(async (req, res, next) => {
 
   const userDetails = await contactModel.findOne({
     phone: req.body.phone
-  }).populate("contacts").populate("sentFriendRequests").populate("receivedFriendRequests")
+  }).populate("contacts.contact").populate("sentFriendRequests").populate("receivedFriendRequests")
 
   const token = signToken(response._id)
 

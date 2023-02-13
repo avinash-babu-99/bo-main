@@ -1,5 +1,16 @@
 const mongoose = require("mongoose");
 
+const contactListSchema = new mongoose.Schema({
+  contact: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'contact'
+  },
+  status: {
+    type: String,
+    default: 'online'
+  }
+});
+
 const contactSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -17,10 +28,7 @@ const contactSchema = new mongoose.Schema({
     select: false
   },
   contacts: [
-    {
-      type: mongoose.Schema.ObjectId,
-      ref: "contact",
-    },
+    contactListSchema
   ],
   sentFriendRequests: [
     {
