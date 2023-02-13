@@ -65,15 +65,23 @@ io.on("connection", (socket) => {
   socket.on('loginDetails', async (data) => {
     console.log(data, 'details')
     loginDetails = data
-    updateContactStatus(loginDetails._id, 'online')
-    socket.emit("updateContactStatus", loginDetails._id)
+    updateContactStatus(loginDetails._id, 'online').then(()=>[
+      io.emit("updateContactStatus", {
+        _id: loginDetails._id,
+        status: 'online'
+      })
+    ])
   })
 
 
   socket.on('disconnect', async () => {
     console.log(`Client disconnected: ${socket.id}`, loginDetails);
-    updateContactStatus(loginDetails._id, 'offline')
-    socket.emit("updateContactStatus", loginDetails._id)
+    updateContactStatus(loginDetails._id, 'offline').then(()=>{
+      io.emit("updateContactStatus", {
+        _id: loginDetails._id,
+        status: 'offline'
+      })
+    })
   });
 
   socket.on("goOnline", (data) => {
