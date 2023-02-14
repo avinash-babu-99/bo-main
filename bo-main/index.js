@@ -47,8 +47,6 @@ async function updateContactStatus(id, status) {
     })
   }
 
-  console.log(res, 'res in ansync');
-
   return res
 }
 
@@ -63,7 +61,6 @@ io.on("connection", (socket) => {
   let loginDetails = {}
 
   socket.on('loginDetails', async (data) => {
-    console.log(data, 'details')
     loginDetails = data
     updateContactStatus(loginDetails._id, 'online').then(()=>[
       io.emit("updateContactStatus", {
@@ -75,7 +72,6 @@ io.on("connection", (socket) => {
 
 
   socket.on('disconnect', async () => {
-    console.log(`Client disconnected: ${socket.id}`, loginDetails);
     updateContactStatus(loginDetails._id, 'offline').then(()=>{
       io.emit("updateContactStatus", {
         _id: loginDetails._id,
