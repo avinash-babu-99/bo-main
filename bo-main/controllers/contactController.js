@@ -4,6 +4,7 @@ const jwt = require("jsonwebtoken");
 const { promisify } = require("util");
 
 const AppError = require("../utils/appError");
+const model = require("../models/contactUserModel");
 
 const filterObject = (obj, ...otherFields) => {
   let finalObject = {};
@@ -52,6 +53,7 @@ exports.getContactByPhone = catchAsync(async (req, res, next) => {
 
 exports.getAddFriends = catchAsync(async (req, res, next) => {
   let searchArray = req.body.searchArray;
+  console.log(searchArray, 'searchArray')
   const users = await contactModel
     .find({ _id: { $nin: searchArray } })
     .populate("contacts.contact");
@@ -97,15 +99,19 @@ exports.acceptOrRejectFriendRequest = catchAsync(async (req, res, next) => {
 
   if (req.body.action === "accept") {
     const fromResponse = await contactModel.findByIdAndUpdate(fromPayload._id, {
-      $push: { contacts: {
-        contact: toPayload._id,
-      } },
+      $push: {
+        contacts: {
+          contact: toPayload._id,
+        }
+      },
     });
 
     const toResponse = await contactModel.findByIdAndUpdate(toPayload._id, {
-      $push: { contacts: {
-        contact: fromPayload._id,
-      } },
+      $push: {
+        contacts: {
+          contact: fromPayload._id,
+        }
+      },
     });
   }
 
@@ -119,11 +125,16 @@ exports.acceptOrRejectFriendRequest = catchAsync(async (req, res, next) => {
 
 exports.removeFriend = catchAsync(async (req, res, next) => {
   const removeResponse = await contactModel.findByIdAndUpdate(req.body._id, {
-    $pull: { contacts: req.body.contactId },
+    $pull: {
+      "contacts": {
+        contact:
+          { _id: req.body.contactId }
+      }
+    },
   });
 
   const Response = await contactModel.findByIdAndUpdate(req.body.contactId, {
-    $pull: { contacts: req.body._id },
+    $pull: { "contacts": { contact: { _id: req.body._id } } },
   });
 
   res.status(201).json({
@@ -152,7 +163,7 @@ exports.getContactById = catchAsync(async (req, res, next) => {
 });
 
 
-exports.findByIdAndUpdate = catchAsync(async(req, res, next)=>{
+exports.findByIdAndUpdate = catchAsync(async (req, res, next) => {
   const id = req.params.id;
   let user
   if (id) {
@@ -165,10 +176,50 @@ exports.findByIdAndUpdate = catchAsync(async(req, res, next)=>{
       .populate("receivedFriendRequests");
   }
 
-  if( user ) {
+  if (user) {
     res.status(201).json({
-      status:'updated successfully',
+      status: 'updated successfully',
       response: user
     })
   }
+})
+
+
+exports.aggregateTest = catchAsync(async (req, res, next) => {
+  let response
+
+  response = await contactModel.aggregate([
+    {
+      $match: {
+        status: { $in: ["online", "offline"] }
+      }
+    },
+    {
+      $group: {
+        _id: {
+          statusGroup: "$status",
+          phone: "$phone"
+        },
+        "highest_population": { $first: "$phone" },
+      },
+
+    },
+
+    {
+      $project: {
+        _id: 0,
+        data: {
+          statusProject: "$_id.statusGroup",
+          phonePoject: "$_id.phone"
+        }
+      }
+    }
+
+  ])
+
+
+  res.status(201).json({
+    data: response
+  })
+
 })

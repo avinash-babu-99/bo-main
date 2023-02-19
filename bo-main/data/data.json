@@ -86,7 +86,7 @@
     "imageCover": "tour-1-cover.jpg",
     "locations": [
       {
-        "_id": "5c88fa8cf4afda39709c2954",
+        "_id": "5c88fa8cf4afda39709c2954",  
         "description": "Banff National Park",
         "type": "Point",
         "coordinates": [-116.214531, 51.417611],

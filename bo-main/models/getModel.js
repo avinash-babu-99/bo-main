@@ -33,6 +33,9 @@ const DBSchema = new mongoose.Schema(
       //   message: 'error message if needed'
       // }
     },
+    locations: {
+      type: Array
+    },
     value: {
       type: Number,
     },
@@ -42,7 +45,9 @@ const DBSchema = new mongoose.Schema(
       default: Date.now(),
       select: false,
     },
+    description: String,
     slug: String,
+    imageCover: String,
     secretAccount: {
       type: Boolean,
       default: false,

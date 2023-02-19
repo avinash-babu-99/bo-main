@@ -1,8 +1,8 @@
 const mongoose = require("mongoose");
 
 const fs = require("fs");
-// const DBModel = require("../models/getModel");
-const DBModel = require("../models/contactModel");
+const DBModel = require("../models/getModel");
+// const DBModel = require("../models/contactModel");
 // const DBModel = require("../models/messagesModel");
 
 const dotenv = require("dotenv");
@@ -26,31 +26,31 @@ mongoose
     console.log("error connecting Data base");
   });
 
-// const data = JSON.parse(fs.readFileSync(`${__dirname}/my-data.json`, "utf-8"));
+const data = JSON.parse(fs.readFileSync(`${__dirname}/data.json`, "utf-8"));
 
-const data = [
-  {
-    name: "person 1",
-    phone: "12345",
-    contacts: [],
-    sentFriendRequests: [],
-    receivedFriendRequests: [],
-  },
-  {
-    name: "person 2",
-    phone: "12346",
-    contacts: [],
-    sentFriendRequests: [],
-    receivedFriendRequests: [],
-  },
-  {
-    name: "person 3",
-    phone: "12347",
-    contacts: [],
-    sentFriendRequests: [],
-    receivedFriendRequests: [],
-  },
-];
+// const data = [
+//   {
+//     name: "person 1",
+//     phone: "12345",
+//     contacts: [],
+//     sentFriendRequests: [],
+//     receivedFriendRequests: [],
+//   },
+//   {
+//     name: "person 2",
+//     phone: "12346",
+//     contacts: [],
+//     sentFriendRequests: [],
+//     receivedFriendRequests: [],
+//   },
+//   {
+//     name: "person 3",
+//     phone: "12347",
+//     contacts: [],
+//     sentFriendRequests: [],
+//     receivedFriendRequests: [],
+//   },
+// ];
 
 const importData = async () => {
   try {
