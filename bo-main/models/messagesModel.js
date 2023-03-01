@@ -13,6 +13,11 @@ const schema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  status: {
+    type: String,
+    enum: ["unread", "read", "error"],
+    default: "unread"
+  },
   sentAt: {
     type: Date,
     default: Date.now(),

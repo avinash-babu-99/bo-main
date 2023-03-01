@@ -53,9 +53,25 @@ exports.getContactByPhone = catchAsync(async (req, res, next) => {
 
 exports.getAddFriends = catchAsync(async (req, res, next) => {
   let searchArray = req.body.searchArray;
+  let currentUser = req.body.currentUser
   console.log(searchArray, 'searchArray')
+  let finalArray = []
+  finalArray.push(currentUser._id)
+
+  if(currentUser.contacts) {
+
+    currentUser.contacts.forEach(data=>{
+
+      if(data.contact && data.contact._id) {
+
+        finalArray.push(data.contact._id)
+
+      }
+
+    })
+  }
   const users = await contactModel
-    .find({ _id: { $nin: searchArray } })
+    .find({ _id: { $nin: finalArray } })
     .populate("contacts.contact");
 
   res.status(201).json({
