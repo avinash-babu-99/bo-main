@@ -102,6 +102,8 @@ exports.protect = catchAsync(async (req, res, next) => {
 
   req.user = currentUser
 
+  console.log(req.user, 'user in protect');
+
   console.log(req.user, 'user from protect');
 
   next()

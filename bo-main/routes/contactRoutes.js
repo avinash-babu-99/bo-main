@@ -16,5 +16,13 @@ router.route("/removeContact").patch(contactController.removeFriend);
 router.route("/aggregate").get(contactController.aggregateTest)
 router.route("/:id").get(contactController.getContactById)
 router.route("/:id").patch(contactController.findByIdAndUpdate)
+router.route("/uploadProfile").post(contactUserController.protect, contactController.uploadUserProfile, (req, res, next)=>{
+  console.log(req.file, 'file')
+  // res.status(201).json({
+  //   status: 'success!!',
+  //   message: 'photo successfully uploaded.'
+  // })
+})
+router.route("/getProfilePhoto/:fileName").get(contactUserController.protect, contactController.getProfilePhoto)
 
 module.exports = router;

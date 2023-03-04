@@ -5,10 +5,18 @@ const contactListSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'contact'
   },
+  // roomId: {
+  //   type: mongoose.Schema.Types.ObjectId,
+  //   ref: 'rooms',
+  // },
   status: {
     type: String,
     default: 'online'
-  }
+  },
+  // unReadMessagesCount: {
+  //   type: Number,
+  //   default: 0
+  // }
 });
 
 const contactSchema = new mongoose.Schema({

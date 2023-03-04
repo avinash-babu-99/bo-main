@@ -2,6 +2,9 @@ const contactModel = require("../models/contactModel");
 const catchAsync = require("../utils/catchAsync");
 const jwt = require("jsonwebtoken");
 const { promisify } = require("util");
+const multer = require("multer")
+const path = require('path');
+const fs = require('fs')
 
 const AppError = require("../utils/appError");
 const model = require("../models/contactUserModel");
@@ -16,6 +19,46 @@ const filterObject = (obj, ...otherFields) => {
 
   return finalObject;
 };
+
+const multerStorage = multer.diskStorage({
+  destination: (req, file, cb)=>{
+    cb(null, 'assets/images')
+  },
+  filename: (req, file, cb)=>{
+    const ext = file.mimetype.split('/')[1];
+    cb(null, `user-${req.user._id}`)
+  }
+})
+
+const multerFilter = (req, file, cb)=>{
+  if(file.mimetype.startsWith('image')){
+    cb(null, true)
+  } else{
+    cb(new AppError('Not an image, please upload only image files', 400), false)
+  }
+}
+
+const upload = multer({
+  storage: multerStorage,
+  fileFilter: multerFilter
+})
+
+exports.uploadUserProfile = upload.single('photo')
+
+exports.getProfilePhoto = catchAsync(async (req, res, next)=>{
+  const fileName = req.params.fileName
+  // const filePath = path.join(__dirname, '../assets/images', fileName)
+  const filePath = path.join(__dirname, '../assets/images/user-6400831aa611cb3d1ce40bc5')
+
+  // res.set('Content-Type', 'image/jpeg');
+  const imagePath = path.join(__dirname, '../assets/images/user-6400831aa611cb3d1ce40bc5.jpeg');
+  const image = fs.readFileSync(imagePath);
+  const base64Image = Buffer.from(image).toString('base64');
+  res.send(base64Image);  res.status(201).json({
+    blob: base64Image
+  });
+
+})
 
 exports.getContacts = catchAsync(async (req, res, next) => {
 
