@@ -4,6 +4,7 @@ const AppError = require("../utils/appError");
 const jwt = require("jsonwebtoken");
 const catchAsync = require("../utils/catchAsync");
 const { promisify } = require("util");
+const fs = require("fs");
 
 
 
@@ -18,6 +19,17 @@ const signToken = (id) => {
     }
   );
 
+}
+
+const getFileBase64 = (path, fileName) => {
+
+  const base64 = fs.readFileSync(
+    `${path}/${fileName}`
+  );
+
+  const base64String = base64.toString('base64');
+
+  return base64String
 }
 
 
@@ -100,9 +112,11 @@ exports.protect = catchAsync(async (req, res, next) => {
     );
   }
 
-  req.user = currentUser
+  const user = await contactModel.findOne({
+    userDetail: currentUser._id
+  })
 
-  console.log(req.user, 'user in protect');
+  req.user = user
 
   console.log(req.user, 'user from protect');
 
@@ -128,11 +142,22 @@ exports.login = catchAsync(async (req, res, next) => {
 
   response.password = undefined;
 
+  let base64
+
+  if (userDetails.profilePicture && userDetails.profilePicture.isProfileUploaded) {
+
+    base64 = getFileBase64(userDetails.profilePicture.path, userDetails.profilePicture.fileName)
+
+  }
+
   res.set('Authorization', `Bearer ${token}`);
   res.status(201).json({
     message: 'Login success',
     token: token,
-    user: userDetails
-    })
+    user: userDetails,
+    files: {
+      profile: base64 && base64
+    }
+  })
 
 })

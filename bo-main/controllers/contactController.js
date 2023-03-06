@@ -1,7 +1,6 @@
 const contactModel = require("../models/contactModel");
 const catchAsync = require("../utils/catchAsync");
 const jwt = require("jsonwebtoken");
-const { promisify } = require("util");
 const multer = require("multer");
 const path = require("path");
 const fs = require("fs");
@@ -19,6 +18,18 @@ const filterObject = (obj, ...otherFields) => {
 
   return finalObject;
 };
+
+const getFileBase64 = (path, fileName) => {
+
+  const base64 = fs.readFileSync(
+    `${path}/${fileName}`
+  );
+
+  const base64String = base64.toString('base64');
+
+  return base64String
+}
+
 
 const multerStorage = multer.diskStorage({
   destination: (req, file, cb) => {
@@ -47,6 +58,33 @@ const upload = multer({
 });
 
 exports.uploadUserProfile = upload.single("photo");
+
+exports.saveProfilePhotoDetails = catchAsync(async (req, res, next) => {
+  console.log(req.file, 'file');
+  let profilePicture = {
+      fileName: req?.file?.filename && req.file.filename,
+      path: req?.file?.destination && req.file.destination,
+      originalFileName: req?.file?.originalname && req.file.originalname,
+      isProfileUploaded: true,
+      mimetype: req?.file?.mimetype && req.file.mimetype,
+  }
+
+  let updatedContact
+
+  if (req.user && req.user._id) {
+
+    updatedContact = await contactModel.findByIdAndUpdate(req.user._id, {
+      profilePicture
+    }, { new: true });
+  }
+
+  res.status(201).json({
+    status: 'success!!',
+    message: 'photo successfully uploaded.',
+    updatedContact
+  })
+
+})
 
 exports.getProfilePhoto = catchAsync(async (req, res, next) => {
   const fileName = req.params.fileName;
@@ -207,10 +245,19 @@ exports.getContactById = catchAsync(async (req, res, next) => {
       .populate("receivedFriendRequests");
   }
 
+  if (userDetails.profilePicture && userDetails.profilePicture.isProfileUploaded) {
+
+    base64 = getFileBase64(userDetails.profilePicture.path, userDetails.profilePicture.fileName)
+
+  }
+
   if (user) {
     res.status(201).json({
       status: "success",
       response: user,
+      files: {
+        profile: base64 && base64
+      }
     });
   }
 });

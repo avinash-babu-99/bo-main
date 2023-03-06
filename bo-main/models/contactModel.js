@@ -31,6 +31,23 @@ const contactSchema = new mongoose.Schema({
     required: [true, "Enter you phone number"],
     unique: true,
   },
+  profilePicture: {
+    fileName: {
+      type: String,
+      unique: true,
+    },
+    path: {
+      type: String
+    },
+    originalFileName: {
+      type: String
+    },
+    isProfileUploaded: {
+      type: Boolean,
+      default: false
+    },
+    mimetype: String
+  },
   userDetail: {
     type: mongoose.Schema.ObjectId,
     select: false
