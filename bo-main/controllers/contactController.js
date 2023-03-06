@@ -245,9 +245,9 @@ exports.getContactById = catchAsync(async (req, res, next) => {
       .populate("receivedFriendRequests");
   }
 
-  if (userDetails.profilePicture && userDetails.profilePicture.isProfileUploaded) {
+  if (user.profilePicture && user.profilePicture.isProfileUploaded) {
 
-    base64 = getFileBase64(userDetails.profilePicture.path, userDetails.profilePicture.fileName)
+    base64 = getFileBase64(user.profilePicture.path, user.profilePicture.fileName)
 
   }
 

@@ -144,7 +144,7 @@ exports.login = catchAsync(async (req, res, next) => {
 
   let base64
 
-  if (userDetails.profilePicture && userDetails.profilePicture.isProfileUploaded) {
+  if (userDetails && userDetails.profilePicture && userDetails.profilePicture.isProfileUploaded) {
 
     base64 = getFileBase64(userDetails.profilePicture.path, userDetails.profilePicture.fileName)
 
