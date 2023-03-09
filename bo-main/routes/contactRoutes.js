@@ -18,5 +18,6 @@ router.route("/:id").get(contactController.getContactById)
 router.route("/:id").patch(contactController.findByIdAndUpdate)
 router.route("/uploadProfile").post(contactUserController.protect, contactController.uploadUserProfile, contactController.saveProfilePhotoDetails)
 router.route("/getProfilePhoto/:fileName").get(contactUserController.protect, contactController.getProfilePhoto)
+router.route("/generateProfilesBase64").post(contactController.generateProfilesBase64)
 
 module.exports = router;

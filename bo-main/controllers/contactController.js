@@ -101,7 +101,6 @@ exports.getProfilePhoto = catchAsync(async (req, res, next) => {
 });
 
 exports.getContacts = catchAsync(async (req, res, next) => {
-  console.log("coming contacts api");
   const users = await contactModel.find().populate("contacts.contact");
 
   res.status(201).json({
@@ -282,6 +281,29 @@ exports.findByIdAndUpdate = catchAsync(async (req, res, next) => {
     });
   }
 });
+
+exports.generateProfilesBase64 = catchAsync(async (req, res, next)=>{
+  let contacts = req.body
+  let finalArray = []
+
+  contacts.forEach(contact=>{
+    if (contact && contact.profilePicture && contact.profilePicture.isProfileUploaded) {
+
+      let base64 = getFileBase64(contact.profilePicture.path, contact.profilePicture.fileName)
+
+      finalArray.push({
+        contact,
+        base64
+      })
+    }
+  })
+
+  res.status(201).json({
+    status: 'success',
+    res: finalArray
+  })
+
+})
 
 exports.aggregateTest = catchAsync(async (req, res, next) => {
   let response;

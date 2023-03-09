@@ -118,8 +118,6 @@ exports.protect = catchAsync(async (req, res, next) => {
 
   req.user = user
 
-  console.log(req.user, 'user from protect');
-
   next()
 
 })
@@ -134,7 +132,7 @@ exports.login = catchAsync(async (req, res, next) => {
     return next(new AppError("email or password is incorrect", 400));
   }
 
-  const userDetails = await contactModel.findOne({
+  let userDetails = await contactModel.findOne({
     phone: req.body.phone
   }).populate("contacts.contact").populate("sentFriendRequests").populate("receivedFriendRequests")
 
