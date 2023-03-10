@@ -215,7 +215,7 @@ exports.acceptOrRejectFriendRequest = catchAsync(async (req, res, next) => {
     );
 
     const payload = {
-      users: [fromResponse, toResponse],
+      users: [toResponse._id, fromResponse._id],
     };
 
     const contactId = toResponse._id
@@ -279,7 +279,8 @@ exports.getContactById = catchAsync(async (req, res, next) => {
       .findById(id)
       .populate("contacts.contact")
       .populate("sentFriendRequests")
-      .populate("receivedFriendRequests");
+      .populate("receivedFriendRequests")
+      .populate("contacts.roomId");
   }
 
   let base64

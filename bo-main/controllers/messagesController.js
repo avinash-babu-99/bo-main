@@ -1,4 +1,5 @@
 const model = require("../models/messagesModel");
+const roomModel = require("../models/roomModel")
 const catchAsync = require("../utils/catchAsync");
 
 exports.addMessage = catchAsync(async (req, res, next) => {
@@ -10,9 +11,24 @@ exports.addMessage = catchAsync(async (req, res, next) => {
   };
   console.log(payload);
   const postedData = await model.create(payload);
+
+  let room = await roomModel.findById(req.body.data.room)
+
+  room.lastMessage = {
+    id: payload.sender,
+    message: payload.message
+  }
+
+  room.lastChatted = Date.now()
+
+  await room.save()
+
   res.status(201).json({
     status: "success, message received",
     sentMessage: postedData,
+    roomData: {
+      ...payload, date: Date.now()
+    }
   });
 });
 

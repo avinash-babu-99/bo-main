@@ -2,11 +2,11 @@ const mongoose = require("mongoose");
 
 const schema = new mongoose.Schema({
   roomId: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
     required: true,
   },
   sender: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
     required: true,
   },
   message: {

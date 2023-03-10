@@ -16,9 +16,6 @@ const contactListSchema = new mongoose.Schema({
   lastMessage:{
     type: String
   },
-  lastTexted: {
-    type: Date
-  },
   unReadMessagesCount: {
     type: Number,
     default: 0

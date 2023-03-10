@@ -107,6 +107,7 @@ io.on("connection", (socket) => {
     io.in(data.room).emit("new message", {
       sender: data.sendUser,
       message: data.message,
+      roomData: data.roomData
     });
   });
 

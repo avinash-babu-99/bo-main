@@ -3,8 +3,19 @@ const mongoose = require("mongoose")
 
 const schema = new mongoose.Schema({
   users: {
-    type: [String],
+    type: [mongoose.Schema.Types.ObjectId],
     required: true
+  },
+  lastMessage: {
+    id: {
+      type: mongoose.Schema.Types.ObjectId
+    },
+    message: {
+      type: String
+    }
+  },
+  lastChatted: {
+    type: Date
   }
 })
 
