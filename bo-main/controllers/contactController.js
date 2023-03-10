@@ -1,4 +1,5 @@
 const contactModel = require("../models/contactModel");
+const roomModel =  require("../models/roomModel")
 const catchAsync = require("../utils/catchAsync");
 const jwt = require("jsonwebtoken");
 const multer = require("multer");
@@ -62,11 +63,11 @@ exports.uploadUserProfile = upload.single("photo");
 exports.saveProfilePhotoDetails = catchAsync(async (req, res, next) => {
   console.log(req.file, 'file');
   let profilePicture = {
-      fileName: req?.file?.filename && req.file.filename,
-      path: req?.file?.destination && req.file.destination,
-      originalFileName: req?.file?.originalname && req.file.originalname,
-      isProfileUploaded: true,
-      mimetype: req?.file?.mimetype && req.file.mimetype,
+    fileName: req?.file?.filename && req.file.filename,
+    path: req?.file?.destination && req.file.destination,
+    originalFileName: req?.file?.originalname && req.file.originalname,
+    isProfileUploaded: true,
+    mimetype: req?.file?.mimetype && req.file.mimetype,
   }
 
   let updatedContact
@@ -195,7 +196,11 @@ exports.acceptOrRejectFriendRequest = catchAsync(async (req, res, next) => {
           contact: toPayload._id,
         },
       },
-    });
+    },
+    {
+      new: true
+    }
+    );
 
     const toResponse = await contactModel.findByIdAndUpdate(toPayload._id, {
       $push: {
@@ -203,10 +208,43 @@ exports.acceptOrRejectFriendRequest = catchAsync(async (req, res, next) => {
           contact: fromPayload._id,
         },
       },
-    });
-  }
+    },
+    {
+      new: true
+    }
+    );
 
-  console.log(req.body, "req.body");
+    const payload = {
+      users: [fromResponse, toResponse],
+    };
+
+    const contactId = toResponse._id
+    const userId = fromResponse._id
+
+    let user = await contactModel.findById(userId).populate("contacts.contact")
+
+    let userIndex = user.contacts.findIndex((contact) => {
+      return contact.contact._id.equals(contactId)
+    })
+
+    let contact = await contactModel.findById(contactId).populate("contacts.contact")
+
+    let contactIndex = contact.contacts.findIndex((contact) => {
+      return contact.contact._id.equals(userId)
+    })
+
+    const postedData = await roomModel.create(payload);
+
+    contact.contacts[contactIndex]['roomId'] = postedData._id;
+
+    user.contacts[userIndex]['roomId'] = postedData._id;
+
+    await contact.save()
+
+    await user.save()
+
+
+  }
 
   res.status(201).json({
     status: "success!",
@@ -243,6 +281,8 @@ exports.getContactById = catchAsync(async (req, res, next) => {
       .populate("sentFriendRequests")
       .populate("receivedFriendRequests");
   }
+
+  let base64
 
   if (user.profilePicture && user.profilePicture.isProfileUploaded) {
 
@@ -282,11 +322,11 @@ exports.findByIdAndUpdate = catchAsync(async (req, res, next) => {
   }
 });
 
-exports.generateProfilesBase64 = catchAsync(async (req, res, next)=>{
+exports.generateProfilesBase64 = catchAsync(async (req, res, next) => {
   let contacts = req.body
   let finalArray = []
 
-  contacts.forEach(contact=>{
+  contacts.forEach(contact => {
     if (contact && contact.profilePicture && contact.profilePicture.isProfileUploaded) {
 
       let base64 = getFileBase64(contact.profilePicture.path, contact.profilePicture.fileName)

@@ -5,18 +5,24 @@ const contactListSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'contact'
   },
-  // roomId: {
-  //   type: mongoose.Schema.Types.ObjectId,
-  //   ref: 'rooms',
-  // },
+  roomId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'rooms',
+  },
   status: {
     type: String,
     default: 'online'
   },
-  // unReadMessagesCount: {
-  //   type: Number,
-  //   default: 0
-  // }
+  lastMessage:{
+    type: String
+  },
+  lastTexted: {
+    type: Date
+  },
+  unReadMessagesCount: {
+    type: Number,
+    default: 0
+  }
 });
 
 const contactSchema = new mongoose.Schema({
@@ -34,7 +40,7 @@ const contactSchema = new mongoose.Schema({
   profilePicture: {
     fileName: {
       type: String,
-      unique: true,
+      default: ''
     },
     path: {
       type: String

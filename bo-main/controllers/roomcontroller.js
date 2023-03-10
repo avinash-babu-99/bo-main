@@ -12,8 +12,6 @@ exports.getRoom = catchAsync(async (req, res, next) => {
 
   const data = await model.find({ users: { $all: value } });
 
-  console.log(data, "response");
-
   return res.status(200).json({
     message: "success!",
     data: data,
@@ -21,54 +19,35 @@ exports.getRoom = catchAsync(async (req, res, next) => {
 });
 
 exports.newRoom = catchAsync(async (req, res, next) => {
+  let users = req.body.users
   const payload = {
     users: [...req.body.users],
   };
-  console.log('users', [...req.body.users]);
+
+  const contactId = users[0]
+  const userId = users[1]
+
+  let user = await contactModel.findById(userId).populate("contacts.contact")
+
+  let userIndex = user.contacts.findIndex((contact)=>{
+    return contact.contact._id.equals(contactId)
+  })
+
+  let contact = await contactModel.findById(contactId).populate("contacts.contact")
+
+  let contactIndex = contact.contacts.findIndex((contact)=>{
+    return contact.contact._id.equals(userId)
+  })
 
   const postedData = await model.create(payload);
 
-  // console.log(postedData, 'postedData');
+  contact.contacts[contactIndex]['roomId'] = postedData._id;
 
-  // if (req.body.users && (req.body.users.length == 2) && postedData) {
+  user.contacts[userIndex]['roomId'] = postedData._id;
 
-  //   console.log(postedData._id);
+  await contact.save()
 
-  //   let contactOne = new ObjectId(req.body.users[0])
-  //   let contactTwo = new ObjectId(req.body.users[1])
-
-  //   let contactOneValue = await contactModel.findById(contactOne).populate('contact')
-  //   let contactOneIndex = contactOneValue.contacts.findIndex(contact => {
-  //     console.log(contact.contact, 'contact.contact', typeof(contact.contact));
-  //     console.log(contactTwo, 'contactTwo', typeof(contactTwo))
-  //     console.log(contact.contact === contactTwo, 'contact.contact === contactTwo');
-  //     return contact.contact.equals(contactTwo)
-  //   }
-  //   )
-  //   let contactOneObject = {
-  //     ...contactOneValue.contacts[contactOneIndex],
-  //     roomId: postedData._id
-  //   }
-
-  //   console.log(contactOneValue, 'contactOneValue');
-  //   console.log(contactOneIndex, 'contactOneIndex');
-
-  //   console.log(contactOneValue.contacts[contactOneIndex], 'contactOneValue.contacts[contactOneIndex]');
-  //   contactOneValue.contacts[contactOneIndex] = contactOneObject
-  //   await contactOneValue.save()
-
-  //   let contactTwoValue = await contactModel.findById(contactTwo).populate('contact')
-  //   let contactTwoIndex = contactTwoValue.contacts.findIndex(contact => contact.contact === contactOne)
-  //   let contactTwoObject = {
-  //     ...contactTwoValue.contacts[contactTwoIndex],
-  //     roomId: postedData._id
-  //   }
-
-  //   console.log(contactTwoValue.contacts[contactTwoIndex], 'contactTwoValue.contacts[contactTwoIndex]');
-  //   contactTwoValue.contacts[contactTwoIndex] = contactTwoObject
-  //   await contactTwoValue.save()
-
-  // }
+  await user.save()
 
   return res.status(200).json({
     message: "success!",
