@@ -3,7 +3,6 @@ const roomModel = require("../models/roomModel")
 const catchAsync = require("../utils/catchAsync");
 
 exports.addMessage = catchAsync(async (req, res, next) => {
-  console.log(req.body, "body");
   const payload = {
     roomId: req.body.data.room,
     message: req.body.data.message,

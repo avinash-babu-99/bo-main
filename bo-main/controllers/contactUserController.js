@@ -22,14 +22,27 @@ const signToken = (id) => {
 }
 
 const getFileBase64 = (path, fileName) => {
+  try {
 
-  const base64 = fs.readFileSync(
-    `${path}/${fileName}`
-  );
+    const base64 = fs.readFileSync(
+      `${path}/${fileName}`
+    );
 
-  const base64String = base64.toString('base64');
+    if ( base64 ) {
 
-  return base64String
+      const base64String = base64.toString('base64');
+
+      return base64String
+    }
+
+    return ''
+
+  } catch {
+
+    return null
+
+  }
+
 }
 
 

@@ -1,5 +1,5 @@
 const contactModel = require("../models/contactModel");
-const roomModel =  require("../models/roomModel")
+const roomModel = require("../models/roomModel")
 const catchAsync = require("../utils/catchAsync");
 const jwt = require("jsonwebtoken");
 const multer = require("multer");
@@ -22,13 +22,22 @@ const filterObject = (obj, ...otherFields) => {
 
 const getFileBase64 = (path, fileName) => {
 
-  const base64 = fs.readFileSync(
-    `${path}/${fileName}`
-  );
+  try {
 
-  const base64String = base64.toString('base64');
+    const base64 = fs.readFileSync(
+      `${path}/${fileName}`
+    );
 
-  return base64String
+    const base64String = base64.toString('base64');
+
+    return base64String
+
+  } catch {
+
+    return null
+
+  }
+
 }
 
 
@@ -87,19 +96,6 @@ exports.saveProfilePhotoDetails = catchAsync(async (req, res, next) => {
 
 })
 
-exports.getProfilePhoto = catchAsync(async (req, res, next) => {
-  const fileName = req.params.fileName;
-
-  const base64 = fs.readFileSync(
-    "assets/images/user-6400831aa611cb3d1ce40bc5.jpeg"
-  );
-
-  const base64String = base64.toString('base64');
-
-  res.status(201).json({
-    blob: base64String,
-  });
-});
 
 exports.getContacts = catchAsync(async (req, res, next) => {
   const users = await contactModel.find().populate("contacts.contact");
@@ -177,7 +173,6 @@ exports.addFriendRequest = catchAsync(async (req, res, next) => {
 });
 
 exports.acceptOrRejectFriendRequest = catchAsync(async (req, res, next) => {
-  console.log(req.body, "body");
   const fromPayload = req.body.from;
   const toPayload = req.body.to;
 
@@ -197,9 +192,9 @@ exports.acceptOrRejectFriendRequest = catchAsync(async (req, res, next) => {
         },
       },
     },
-    {
-      new: true
-    }
+      {
+        new: true
+      }
     );
 
     const toResponse = await contactModel.findByIdAndUpdate(toPayload._id, {
@@ -209,9 +204,9 @@ exports.acceptOrRejectFriendRequest = catchAsync(async (req, res, next) => {
         },
       },
     },
-    {
-      new: true
-    }
+      {
+        new: true
+      }
     );
 
     const payload = {

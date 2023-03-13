@@ -52,7 +52,6 @@ async function updateContactStatus(id, status) {
 
 io.on("connection", (socket) => {
   console.log("coming in");
-  console.log("user connected", socket.id);
   socket.on("join", (data) => {
     socket.join(data.room);
     socket.broadcast.to(data.room).emit("user joined");
@@ -62,12 +61,24 @@ io.on("connection", (socket) => {
 
   socket.on('loginDetails', async (data) => {
     loginDetails = data
+
+    socket.join(loginDetails._id);
+    socket.broadcast.to(loginDetails._id)
+
     updateContactStatus(loginDetails._id, 'online').then(()=>[
       io.emit("updateContactStatus", {
         _id: loginDetails._id,
         status: 'online'
       })
     ])
+  })
+
+  socket.on('notifyContact', (notification)=>{
+
+    io.in(notification.contact._id).emit('myNotification', {
+      ...notification
+    })
+
   })
 
 
@@ -80,30 +91,12 @@ io.on("connection", (socket) => {
     })
   });
 
-  socket.on("goOnline", (data) => {
-    socket.join(data._id)
-    io.in(data.room).emit("onlineStatus", {
-      id: data.id,
-      status: "online"
-    });
-  })
-
-  socket.on("goOffline", (data) => {
-    // console.log(data, "data going offline");
-    socket.join(data._id)
-    io.in(data.room).emit("onlineStatus", {
-      id: data.id,
-      status: "offline"
-    });
-  })
-
   socket.on("bot message", (args, cb) => {
     console.log(args);
     cb("Shut the fuck up and talk to real people");
   });
 
   socket.on("message", (data) => {
-    console.log("message coming", data);
     io.in(data.room).emit("new message", {
       sender: data.sendUser,
       message: data.message,
