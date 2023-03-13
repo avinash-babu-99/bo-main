@@ -1,6 +1,7 @@
 const model = require("../models/messagesModel");
 const roomModel = require("../models/roomModel")
 const catchAsync = require("../utils/catchAsync");
+const mongoose = require("mongoose");
 
 exports.addMessage = catchAsync(async (req, res, next) => {
   const payload = {
@@ -42,3 +43,42 @@ exports.getMessages = catchAsync(async (req, res, next) => {
     chatLength: messages.length,
   });
 });
+
+exports.getUnreadMessages = catchAsync(async (req, res, next) => {
+
+  const roomIds = req.body.roomIds
+
+  let ids = roomIds.map((id) => {
+    return mongoose.Types.ObjectId(id)
+  })
+  console.log(roomIds);
+  const response = await model.aggregate([{
+    $match: {
+      roomId: {
+        $in: [
+          ...ids
+        ]
+      }
+    }
+  },
+  {
+    $group: {
+      _id: { roomId: "$roomId", status: "$status" },
+      count: { $sum: 1 }
+    }
+  },
+  { $match: { "_id.status": "unread" } },
+  {
+    $project: {
+      _id: "$_id.roomId",
+      count: "$count"
+    }
+  }
+  ])
+
+  res.status(201).json({
+    message: 'success!',
+    response
+  })
+
+})
