@@ -48,16 +48,23 @@ exports.getUnreadMessages = catchAsync(async (req, res, next) => {
 
   const roomIds = req.body.roomIds
 
-  let ids = roomIds.map((id) => {
+  const sender = req.body.sender
+
+  const ids = roomIds.map((id) => {
     return mongoose.Types.ObjectId(id)
   })
-  console.log(roomIds);
+
+  const senderId = mongoose.Types.ObjectId(sender)
+
   const response = await model.aggregate([{
     $match: {
       roomId: {
         $in: [
           ...ids
         ]
+      },
+      sender: {
+        $ne: senderId
       }
     }
   },
