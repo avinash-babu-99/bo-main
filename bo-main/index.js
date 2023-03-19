@@ -12,6 +12,7 @@ const roomsRouter = require("./routes/roomRoutes");
 const contactUserRouter = require("./routes/contactUserRoutes")
 const cors = require("cors")
 const cookieParser = require('cookie-parser');
+const socketSevice = require('./services/socketService')
 
 const contactModel = require("./models/contactModel")
 
@@ -80,6 +81,11 @@ io.on("connection", (socket) => {
 
   })
 
+  socket.on('handleRoomMessagesStatus', (contact)=>{
+
+    socketSevice.handleRoomMessagesStatus(contact)
+
+  })
 
   socket.on('disconnect', async () => {
     updateContactStatus(loginDetails._id, 'offline').then(()=>{

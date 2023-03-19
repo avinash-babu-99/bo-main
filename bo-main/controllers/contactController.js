@@ -167,6 +167,7 @@ exports.addFriendRequest = catchAsync(async (req, res, next) => {
 exports.acceptOrRejectFriendRequest = catchAsync(async (req, res, next) => {
   const fromPayload = req.body.from;
   const toPayload = req.body.to;
+  let roomId
 
   const fromResponse = await contactModel.findByIdAndUpdate(fromPayload._id, {
     $pull: { receivedFriendRequests: toPayload._id },
@@ -230,12 +231,15 @@ exports.acceptOrRejectFriendRequest = catchAsync(async (req, res, next) => {
 
     await user.save()
 
+    roomId = postedData._id
+
 
   }
 
   res.status(201).json({
     status: "success!",
     message: "status updated",
+    roomId
   });
 });
 
