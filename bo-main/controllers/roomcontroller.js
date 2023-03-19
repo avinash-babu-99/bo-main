@@ -8,8 +8,6 @@ exports.getRoom = catchAsync(async (req, res, next) => {
 
   const value = [...req.query.ids];
 
-  console.log(value);
-
   const data = await model.find({ users: { $all: value } });
 
   return res.status(200).json({

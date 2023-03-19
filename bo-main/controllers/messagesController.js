@@ -9,7 +9,6 @@ exports.addMessage = catchAsync(async (req, res, next) => {
     message: req.body.data.message,
     sender: req.body.data.sendUser,
   };
-  console.log(payload);
   const postedData = await model.create(payload);
 
   let room = await roomModel.findById(req.body.data.room)
@@ -51,7 +50,6 @@ exports.getUnreadMessages = catchAsync(async (req, res, next) => {
   let ids = roomIds.map((id) => {
     return mongoose.Types.ObjectId(id)
   })
-  console.log(roomIds);
   const response = await model.aggregate([{
     $match: {
       roomId: {

@@ -70,7 +70,6 @@ const upload = multer({
 exports.uploadUserProfile = upload.single("photo");
 
 exports.saveProfilePhotoDetails = catchAsync(async (req, res, next) => {
-  console.log(req.file, 'file');
   let profilePicture = {
     fileName: req?.file?.filename && req.file.filename,
     path: req?.file?.destination && req.file.destination,
@@ -109,15 +108,11 @@ exports.getContacts = catchAsync(async (req, res, next) => {
 });
 
 exports.getContactByPhone = catchAsync(async (req, res, next) => {
-  console.log(req.body);
   const user = await contactModel
     .find({ phone: req.body.phone })
     .populate("contacts.contact")
     .populate("sentFriendRequests")
     .populate("receivedFriendRequests");
-
-  // await user.populate("users").execPopulate();
-  console.log(user, "user");
 
   if (!user.length) {
     return next(new AppError("incorrect number", 400));
@@ -159,12 +154,9 @@ exports.addFriendRequest = catchAsync(async (req, res, next) => {
   });
 
   const toPayload = req.body.to;
-  console.log(toPayload._id);
   const toResponse = await contactModel.findByIdAndUpdate(toPayload._id, {
     receivedFriendRequests: [...toPayload.receivedFriendRequests],
   });
-
-  console.log(toResponse, "toResponse");
 
   res.status(201).json({
     status: "Success",

@@ -51,7 +51,6 @@ async function updateContactStatus(id, status) {
 }
 
 io.on("connection", (socket) => {
-  console.log("coming in");
   socket.on("join", (data) => {
     socket.join(data.room);
     socket.broadcast.to(data.room).emit("user joined");
@@ -92,7 +91,6 @@ io.on("connection", (socket) => {
   });
 
   socket.on("bot message", (args, cb) => {
-    console.log(args);
     cb("Shut the fuck up and talk to real people");
   });
 
@@ -105,7 +103,6 @@ io.on("connection", (socket) => {
   });
 
   socket.on("notify", (data) => {
-    console.log("notification received");
     io.local.emit("new notification", {
       data,
     });
