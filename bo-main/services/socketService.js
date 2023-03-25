@@ -1,3 +1,4 @@
+const { Mongoose } = require('mongoose')
 const messageModel = require('../models/messagesModel')
 
 
@@ -20,12 +21,19 @@ exports.handleRoomMessagesStatus = async(contact)=>{
   }
 
   console.log(roomId, 'room id' , sender, 'sender');
+  // console.log(roomObjectId, senderObjectId, '24');
+ 
 
   if ( roomId && sender ) {
 
+    const roomObjectId = Mongoose.Types.ObjectId(roomId)
+    const senderObjectId = Mongoose.Types.ObjectId(sender)
+
+    console.log(roomObjectId, senderObjectId, '30');
+
     try {
 
-      await messageModel.updateMany({ roomId: roomId, sender: sender, status: { $ne: "read" } }, { $set: { status: "read" } })
+      await messageModel.updateMany({ roomId: roomObjectId, sender: senderObjectId, status: { $eq: "unread" } }, { $set: { status: "read" } })
 
     } catch (error) {
 
