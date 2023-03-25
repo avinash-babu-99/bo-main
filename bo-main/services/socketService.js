@@ -1,4 +1,4 @@
-const { Mongoose } = require('mongoose')
+const mongoose = require("mongoose");
 const messageModel = require('../models/messagesModel')
 
 
@@ -20,14 +20,12 @@ exports.handleRoomMessagesStatus = async(contact)=>{
 
   }
 
-  console.log(roomId, 'room id' , sender, 'sender');
-  // console.log(roomObjectId, senderObjectId, '24');
  
 
   if ( roomId && sender ) {
 
-    const roomObjectId = Mongoose.Types.ObjectId(roomId)
-    const senderObjectId = Mongoose.Types.ObjectId(sender)
+    const roomObjectId = mongoose.Types.ObjectId(roomId)
+    const senderObjectId = mongoose.Types.ObjectId(sender)
 
     console.log(roomObjectId, senderObjectId, '30');
 
